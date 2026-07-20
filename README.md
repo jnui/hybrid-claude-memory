@@ -2,6 +2,8 @@
 
 this project is inspired by this video https://www.youtube.com/watch?v=H9BUkgDf5Y4
 
+This project is vibe coded and has not been extensively testd, use at your own risk. I am using it on a couple of projects, and it seems to work ok.
+
 Portable, per-project memory for Claude Code. It covers the three jobs any AI memory
 system has to do — **storage**, **injection**, and **recall** — by combining
 [claude-mem](https://github.com/thedotmack/claude-mem) as the global engine with a thin
@@ -70,10 +72,12 @@ Then per project:
 ./install.sh /path/to/your/project
 ```
 
-Restart Claude Code inside that project. The installer is idempotent: it copies the
+Restart Claude Code inside that project (note make sure you are in the project folder). The installer is idempotent: it copies the
 hook and commands, creates `memory/MEMORY.md` from the template (never overwriting an
 existing one), and merges the SessionStart hook into the project's
 `.claude/settings.json` without touching other settings.
+
+The first time you run claude you will get a message saying that the memory does not work until you start it a second time, so if you see that, stop claude and restart claude. Then I normally get it to add something to memory to test it.
 
 To use this on another machine, copy this folder (or clone the repo) and run the same
 two steps.
