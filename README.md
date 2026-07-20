@@ -2,7 +2,7 @@
 
 this project is inspired by this video https://www.youtube.com/watch?v=H9BUkgDf5Y4
 
-This project is vibe coded and has not been extensively testd, use at your own risk. I am using it on a couple of projects, and it seems to work ok.
+This project is vibe coded and has not been extensively tested, use at your own risk. I am using it on a couple of projects, and it seems to work ok.
 
 Portable, per-project memory for Claude Code. It covers the three jobs any AI memory
 system has to do — **storage**, **injection**, and **recall** — by combining
