@@ -1,5 +1,7 @@
 # Claude Code Memory System
 
+this project is inspired by this video https://www.youtube.com/watch?v=H9BUkgDf5Y4
+
 Portable, per-project memory for Claude Code. It covers the three jobs any AI memory
 system has to do — **storage**, **injection**, and **recall** — by combining
 [claude-mem](https://github.com/thedotmack/claude-mem) as the global engine with a thin
