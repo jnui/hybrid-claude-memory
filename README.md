@@ -57,6 +57,54 @@ fabricating one: a confident answer with no source is worse than "not in memory.
 (replacing contradicted bullets rather than duplicating, converting relative dates to
 absolute).
 
+## How it works day-to-day
+
+There isn't one hook — there are several, firing at different rhythms:
+
+- **PostToolUse (claude-mem)** — the workhorse. It fires after *every single tool call*
+  Claude makes: every file read, every edit, every command run. This is why capture is
+  continuous rather than end-of-session. Each firing records an observation to the
+  local worker service.
+- **UserPromptSubmit (claude-mem)** — fires every time you send a prompt.
+- **Stop (claude-mem)** — fires each time Claude finishes responding, closing out that
+  turn's observations.
+- **SessionStart (claude-mem + this package's inject.sh)** — fires once when you launch
+  Claude Code in a project (and again after `/clear` or a resume). claude-mem injects
+  relevant history; this package injects `memory/MEMORY.md`, capped at ~1,300 tokens.
+- **SessionEnd (claude-mem)** — fires when the session closes, for final wrap-up.
+
+During active development, capture happens dozens of times per conversation — you
+never have to think about it.
+
+Over a project's life the flow looks like this: as you work, raw observations pile up
+per tool call; claude-mem's AI compression turns them into structured facts rather
+than storing raw transcripts. Everything is indexed both as keywords (FTS5) and as
+vectors (Chroma), which is why you can later find "that database decision" even if you
+originally called it "the Postgres thing." From your **second session onward** in a
+project, claude-mem starts injecting the most relevant slices of that history at
+startup, so you don't begin from zero.
+
+Then there's the deliberate layer: when something is genuinely durable — "Acme
+invoices weekly," "we chose Supabase" — run `/remember` and it gets promoted into
+`memory/MEMORY.md`, which is *always* injected, not just when search deems it
+relevant. When you need something old, `/recall` searches in tiers and answers with
+citations — or tells you plainly the memory isn't there.
+
+The practical division: claude-mem is your automatic long-tail memory of everything;
+`MEMORY.md` is the small set of facts too important to leave to a search ranking.
+
+### Useful commands
+
+| Command | Where | When to use it |
+|---------|-------|----------------|
+| `/recall <question>` | inside Claude Code | You need something from past sessions — a decision, a client detail, an old outcome. Returns a cited answer or an honest "not in memory". |
+| `/remember <fact>` | inside Claude Code | Something durable just got decided (preference, standing decision, project fact) and you want it in *every* future session, guaranteed. |
+| `/learn-codebase` | inside Claude Code | Optional, once per project: front-loads memory by ingesting the whole repo (~5 min) instead of building memory passively. |
+| `/how-it-works` | inside Claude Code | Quick refresher on claude-mem's pipeline. |
+| `npx claude-mem start` | terminal | The worker isn't running (e.g. after a reboot) and observations aren't being captured. |
+| `npx claude-mem install` | terminal | Once per machine, or to repair/update the global claude-mem setup. |
+| `./install.sh <project-path>` | terminal, from this repo | Add the per-project layer (MEMORY.md + hooks + commands) to a new project. Safe to re-run. |
+
 ## Install
 
 Once per machine:
